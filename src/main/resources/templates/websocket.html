@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #page-static-resources},
+                                                ~{:: #page-nav},
+                                                ~{:: #page-main-content},
+                                               )}">
+
+<head>
+    <title>Websocket</title>
+</head>
+<body>
+<div id="page-nav" th:replace="~{/fragments/app-fragments :: nav-default}"></div>
+<div id="page-main-content">
+    <div id="content">
+        <fieldset>
+            <legend>
+                Server WebSocket
+                <label> [Status: <span id="connectionStatus"></span>]</label>
+            </legend>
+            <div>
+                <label>URL:</label>
+                <input class="form-control2" type="text" id="serverUrl" value="ws://">
+
+                <button class="btn btn-sm btn-success" id="connectButton"  style="display: inline-block;">Open</button>
+                <button class="btn btn-sm btn-danger" id="disconnectButton"  style="display: none;">Close</button>
+
+                <span id="info" class="info"></span>
+            </div>
+
+        </fieldset>
+        <fieldset id="requestArea">
+            <legend>Message</legend>
+            <div>
+                <textarea  class="form-control2"  id="sendMessage" placeholder="Message to send.." disabled="disabled"></textarea>
+            </div>
+            <div>
+                <button class="btn btn-sm btn-primary" id="sendButton" disabled="disabled">Send</button>
+            </div>
+        </fieldset>
+        <fieldset id="messageArea">
+            <legend>Messages (log) <button class="btn btn-sm btn-warning" id="clearMessage">Clear</button></legend>
+            <div id="messages"></div>
+        </fieldset>
+    </div>
+</div>
+
+
+<th:block id="page-static-resources">
+    <script>
+        let ws = null;
+        let url = "ws://localhost:8081/msg";
+
+        function setConnectionState(connected)
+        {
+            $('#connectButton').css("display", connected?"none":"inline-block");
+            $('#disconnectButton').css("display", !connected?"none":"inline-block");
+
+            $('#sendButton').prop( "disabled", !connected );
+            $('#sendMessage').prop( "disabled", !connected );
+
+            $('#connectionStatus').html(connected?"OPEN":"CLOSED");
+        }
+        function display(message)
+        {
+            console = $('#messages');
+            p = document.createElement('p');
+            $(p).append(document.createTextNode(message));
+            $(console).append(p);
+        }
+
+        $(function(){
+
+            $('#serverUrl').val(url);
+
+            $('#connectButton').click(function(){
+                ws = new WebSocket(url);
+                ws.onopen = function() {
+                    setConnectionState(true);
+                    $('#info').html('Info: Connection Established!');
+                };
+
+                ws.onmessage = function(event) {
+                    display(event.data);
+                };
+
+                ws.onclose = function(event) {
+                    setConnectionState(false);
+                    $('#info').html('Info: Connection Closed!');
+                };
+            });
+
+            $('#disconnectButton').click(function(){
+                if (ws != null) {
+                    ws.close();
+                    ws = null;
+                }
+                setConnectionState(false);
+            });
+            $('#sendButton').click(function(){
+                if (ws != null)
+                {
+                    var message = $('#sendMessage').val();
+                    display('Sent to server :: ' + message);
+                    ws.send(message);
+
+                    $('#sendMessage').val('');
+                } else {
+                    $('#info').html('Error: Connection not established..');
+                }
+            });
+
+            $('#clearMessage').click(function(){ $('#messages').empty();});
+
+        });
+    </script>
+</th:block>
+</body>
+</html>

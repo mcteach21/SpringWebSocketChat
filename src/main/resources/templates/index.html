@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #page-static-resources},
+                                                ~{:: #page-nav},
+                                                ~{:: #page-main-content},
+                                               )}">
+
+<head>
+    <title>Index</title>
+</head>
+<body>
+    <div id="page-nav" th:replace="~{/fragments/app-fragments :: nav-default}"></div>
+    <div id="page-main-content">
+        <h2>Index</h2>
+    </div>
+
+
+    <th:block id="page-static-resources">
+        <script>
+            $(function(){
+                console.log('hello from about!');
+            });
+        </script>
+    </th:block>
+</body>
+</html>

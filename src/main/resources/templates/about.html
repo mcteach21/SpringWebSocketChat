@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #page-static-resources},
+                                                ~{:: #page-nav},
+                                                ~{:: #page-main-content},
+                                               )}">
+
+<head>
+    <title>About!</title>
+</head>
+<body>
+    <div id="page-nav" th:replace="~{/fragments/app-fragments :: nav-default}"></div>
+    <div id="page-main-content">
+        <h3 id="reference-documentation">Chat App. : WebSocket + Stomp</h3>
+        <div class="alert alert-info">
+            Application de Chat en utilisant WebSocket en ajoutant STOMP par dessus.<br/>
+
+            <h5>Stomp</h5>
+            STOMP (Simple Text Oriented Messaging Protocol) est un protocole simple basé sur du texte, conçu pour fonctionner avec un middleware orienté message (MOM).<br/>
+            Tout client STOMP peut communiquer avec n'importe quel MessageBroker (courtier de messages) STOMP et être interopérable entre les langages et les plates-formes.
+        </div>
+
+    </div>
+
+
+    <th:block id="page-static-resources">
+        <script>
+            $(function(){
+                console.log('hello from about!');
+            });
+        </script>
+    </th:block>
+</body>
+</html>
